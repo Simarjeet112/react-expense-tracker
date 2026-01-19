@@ -1,21 +1,15 @@
 import mongoose from "mongoose";
 
-const expenseSchema = new mongoose.Schema(
-  {
-    title: {
-      type: String,
-      required: true,
-    },
-    amount: {
-      type: Number,
-      required: true,
-    },
-  },
-  {
-    timestamps: true,
+mongoose.set("bufferCommands", false);
+
+const connectDB = async () => {
+  try {
+    const conn = await mongoose.connect(process.env.MONGO_URI);
+    console.log(`MongoDB connected: ${conn.connection.host}`);
+  } catch (error) {
+    console.error("MongoDB connection failed:", error.message);
+    process.exit(1);
   }
-);
+};
 
-const Expense = mongoose.model("Expense", expenseSchema);
-
-export default Expense;
+export default connectDB;

@@ -1,49 +1,42 @@
-import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { addExpense } from "../features/expenses/expensesSlice";
+import { addExpenseApi } from "../services/expenseApi";
+import { useState } from "react";
 
 function ExpenseForm() {
   const dispatch = useDispatch();
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleAdd = async () => {
     if (!title || !amount) return;
 
-    dispatch(
-      addExpense({
-        id: Date.now(),
-        title,
-        amount: Number(amount),
-      })
-    );
+    const savedExpense = await addExpenseApi({
+      title,
+      amount: Number(amount),
+    });
+
+    dispatch(addExpense(savedExpense));
 
     setTitle("");
     setAmount("");
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ marginBottom: "20px" }}>
+    <>
       <input
-        type="text"
-        placeholder="Expense title"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
+        placeholder="Expense title"
       />
-
       <input
-        type="number"
-        placeholder="Amount"
         value={amount}
         onChange={(e) => setAmount(e.target.value)}
-        style={{ marginLeft: "10px" }}
+        placeholder="Amount"
+        type="number"
       />
-
-      <button type="submit" style={{ marginLeft: "10px" }}>
-        Add Expense
-      </button>
-    </form>
+      <button onClick={handleAdd}>Add Expense</button>
+    </>
   );
 }
 
